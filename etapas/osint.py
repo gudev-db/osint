@@ -217,15 +217,7 @@ def osint_report():
             tavily_summary = "\n".join([f"{key}: {', '.join(value)}" for key, value in tavily_results.items()])
 
             prompt = f"""
-            Você é um especialista em inteligência de mercado. Abaixo estão os dados coletados de diferentes fontes sobre o alvo {inputs['Target Name']}, gênero: {inputs['Gender']}, na
-            faixa de idade {inputs['Age Range']} anos, com personalidade {inputs['Description of personality']}, aparência {inputs['Description of physical appearance']}:
-
-            - Resultados do DuckDuckGo:
-            {duckduckgo_summary}
-
-            - Resultados do Tavily:
-            {tavily_summary}
-
+            Você é um especialista em inteligência de mercado. Abaixo estão os dados coletados de diferentes fontes sobre o alvo 
             - Perfil Linkedin:
             {response_profile}
 
