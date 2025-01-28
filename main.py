@@ -6,12 +6,9 @@ from datetime import datetime
 from etapas.mkt import planej_mkt_page
 from tools.retrieve import visualizar_planejamentos  # Importando a função visualizar_planejamentos
 from tavily import TavilyClient
-from etapas.gemini_midias import planej_midias_page
-from etapas.gemini_crm import planej_crm_page
-from etapas.gemini_campanhas import planej_campanhas
+from etapas.osint import planej_midias_page
 import google.generativeai as genai
-from contato.temaEmail import gen_temas_emails
-from etapas.image_gen import gen_img
+
 
 st.set_page_config(
     layout="wide",
