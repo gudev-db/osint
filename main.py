@@ -19,7 +19,7 @@ t_api_key1 = os.getenv("T_API_KEY")
 rapid_key = os.getenv("RAPID_API")
 
 # Inicializa o cliente Tavily
-client = TavilyClient(api_key=<TAVILY_KEY>)
+client = TavilyClient(api_key='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')
 
 
 
