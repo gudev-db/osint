@@ -14,7 +14,8 @@ genai.configure(api_key=gemini_api_key)
 modelo_linguagem = genai.GenerativeModel("gemini-1.5-flash")
 
 # Configura o cliente Tavily
-client1 = TavilyClient(api_key=t_api_key1)
+client1 = TavilyClient(api_key='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')
+
 
 # Função para buscar informações no DuckDuckGo (RapidAPI)
 def fetch_duckduckgo(query, rapid_key):
