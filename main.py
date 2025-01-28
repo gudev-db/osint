@@ -4,16 +4,16 @@ from crewai import Agent, Task, Process, Crew
 from langchain_openai import ChatOpenAI
 from datetime import datetime
 from etapas.mkt import planej_mkt_page
-from tools.retrieve import visualizar_planejamentos  # Importando a função visualizar_planejamentos
+from tools.retrieve import visualizar_planejamentos 
 from tavily import TavilyClient
-from etapas.osint import planej_midias_page
+from etapas.osint import osint_report
 import google.generativeai as genai
 
 
 st.set_page_config(
     layout="wide",
-    page_title="Macfor AutoDoc",
-    page_icon="static/page-icon.png"
+    page_title="Auto OSINT",
+    #page_icon="static/page-icon.png"
 )
 
 # Configuração das chaves de API
@@ -61,62 +61,31 @@ def login():
 
 # Verifique se o login foi feito antes de exibir o conteúdo
 if login():
-    st.image('static/macLogo.png', width=300)
-    st.text(
-        "Empoderada por IA, a Macfor conta com um sistema gerador de documentos "
-        "automatizado movido por agentes de inteligência artificial. Preencha os campos abaixo "
-        "e gere documentos automáticos para otimizar o tempo de sua equipe. "
-        "Foque o seu trabalho em seu diferencial humano e automatize tarefas repetitivas!"
-    )
+
 
     # Sidebar para escolher entre "Plano Estratégico" ou "Brainstorming"
     selecao_sidebar = st.sidebar.radio(
         "Escolha a seção:",
-        ["Plano Estratégico", "Brainstorming", "Documentos Salvos"],
+        ["Research"],
         index=0  # Predefinir como 'Plano Estratégico' ativo
     )
 
     # Opções para "Plano Estratégico"
-    if selecao_sidebar == "Plano Estratégico":
-        st.sidebar.subheader("Planos Estratégicos")
+    if selecao_sidebar == "Research":
+        st.sidebar.subheader("Research")
         plano_estrategico = st.sidebar.selectbox(
             "Escolha o tipo de plano:",
             [
-                "Selecione uma opção",
-                "Plano Estratégico e de Pesquisa",
-                "Plano Estratégico de Redes e Mídias",
-                "Plano de CRM"
+                "OSINT",
             ]
         )
 
         if plano_estrategico != "Selecione uma opção":
-            if plano_estrategico == "Plano Estratégico e de Pesquisa":
-                planej_mkt_page()
-            elif plano_estrategico == "Plano Estratégico de Redes e Mídias":
-                planej_midias_page()
-            elif plano_estrategico == "Plano de CRM":
-                planej_crm_page()
+            if plano_estrategico == "OSINT":
+                osint_report()
 
-    # Opções para "Brainstorming"
-    elif selecao_sidebar == "Brainstorming":
-        st.sidebar.subheader("Brainstorming")
-        brainstorming_option = st.sidebar.selectbox(
-            "Escolha o tipo de brainstorming:",
-            [
-                "Selecione uma opção",
-                "Brainstorming Conteúdo de Nutrição de Leads",
-                "Brainstorming de Anúncios",
-                "Brainstorming de Imagem"
-            ]
-        )
 
-        if brainstorming_option != "Selecione uma opção":
-            if brainstorming_option == "Brainstorming Conteúdo de Nutrição de Leads":
-                gen_temas_emails()
-            elif brainstorming_option == "Brainstorming de Anúncios":
-                planej_campanhas()
-            elif brainstorming_option == "Brainstorming de Imagem":
-                gen_img()
+
 
     # Seção para "Documentos Salvos"
     elif selecao_sidebar == "Documentos Salvos":
