@@ -27,7 +27,6 @@ def fetch_duckduckgo(query, rapid_key):
     return response.text
 
 
-
 # Função para buscar informações no Tavily sobre um único termo
 def fetch_tavily(query, client, days=90, max_results=15):
     return client.search(query, days=days, max_results=max_results)
@@ -82,8 +81,6 @@ def search_associates(associates):
     return duckduckgo_result, tavily_result
 
 
-import requests
-
 def get_linkedin_profile_data(profile_url):
     """
     Função para buscar dados do perfil do LinkedIn e retornar as informações formatadas.
@@ -94,28 +91,15 @@ def get_linkedin_profile_data(profile_url):
     Returns:
         str: Dados formatados para serem inseridos no prompt do Gemini.
     """
-    url = "https://fresh-linkedin-profile-data.p.rapidapi.com/get-linkedin-profile"
+    url = "https://linkedin-api8.p.rapidapi.com/get-profile-data-by-url"
 
     # Parâmetros para a API
-    querystring = {
-        "linkedin_url": profile_url,
-        "include_skills": "true",
-        "include_certifications": "true",
-        "include_publications": "true",
-        "include_honors": "true",
-        "include_volunteers": "true",
-        "include_projects": "true",
-        "include_patents": "true",
-        "include_courses": "true",
-        "include_organizations": "true",
-        "include_profile_status": "true",
-        "include_company_public_url": "true"
-    }
+    querystring = {"url": profile_url}
 
     # Cabeçalhos para a API
     headers = {
         "x-rapidapi-key": "0c5b50def9msh23155782b7fc458p103523jsn427488a01210",
-        "x-rapidapi-host": "fresh-linkedin-profile-data.p.rapidapi.com"
+        "x-rapidapi-host": "linkedin-api8.p.rapidapi.com"
     }
 
     # Realiza a requisição
@@ -157,77 +141,74 @@ def osint_report():
     st.subheader("OSINT Report")
 
     # Inputs no Streamlit
-    inputs = {
-        "Target Name": st.text_input("Target Name:", key="target"),
-        "Gender": st.text_input("Gender:", key="gender"),
-        "Age Range": st.text_input("Age Range:", key="age"),
-        "Email": st.text_input("Email:", key="email"),
-        "Phone": st.text_input("Phone:", key="phone"),
-        "Profile": st.text_input("Profile:", key="profile"),
-        "Region": st.text_input("Region:", key="region"),
-        "Profession": st.text_input("Profession:", key="profession"),
-        "Employer": st.text_input("Employer:", key="employer"),
-        "Description of personality": st.text_input("Description of personality:", key="description_pers"),
-        "Description of physical appearance": st.text_input("Description of physical appearance:", key="description_phys"),
-        "Associates": st.text_input("Associates:", key="associates"),
-    }
+    target_name = st.text_input("Target Name:", key="target")
+    gender = st.text_input("Gender:", key="gender")
+    age_range = st.text_input("Age Range:", key="age")
+    email = st.text_input("Email:", key="email")
+    phone = st.text_input("Phone:", key="phone")
+    profile = st.text_input("Profile:", key="profile")
+    region = st.text_input("Region:", key="region")
+    profession = st.text_input("Profession:", key="profession")
+    employer = st.text_input("Employer:", key="employer")
+    description_pers = st.text_input("Description of personality:", key="description_pers")
+    description_phys = st.text_input("Description of physical appearance:", key="description_phys")
+    associates = st.text_input("Associates:", key="associates")
 
     # Verifica se os inputs estão preenchidos
-    if any(inputs.values()):
+    if any([target_name, gender, age_range, email, phone, profile, region, profession, employer, description_pers, description_phys, associates]):
         with st.spinner("Realizando pesquisa OSINT..."):
             # Coleta informações do DuckDuckGo e Tavily para cada entrada
             duckduckgo_results = {}
             tavily_results = {}
 
-            import requests
+            if target_name:
+                duckduckgo_results['Target Name'], tavily_results['Target Name'] = search_target_name(target_name)
 
-            url = "https://linkedin-api8.p.rapidapi.com/get-profile-data-by-url"
-            
-            querystring = {"url":f"{inputs['profile']}"}
-            
-            headers = {
-            	"x-rapidapi-key": "0c5b50def9msh23155782b7fc458p103523jsn427488a01210",
-            	"x-rapidapi-host": "linkedin-api8.p.rapidapi.com"
-            }
-            
-            response_profile = requests.get(url, headers=headers, params=querystring)
+            if email:
+                duckduckgo_results['Email'], tavily_results['Email'] = search_email(email)
+            if phone:
+                duckduckgo_results['Phone'], tavily_results['Phone'] = search_phone(phone)
 
-            if inputs['Target Name']:
-                duckduckgo_results['Target Name'], tavily_results['Target Name'] = search_target_name(inputs['Target Name'])
-
-            if inputs['Email']:
-                duckduckgo_results['Email'], tavily_results['Email'] = search_email(inputs['Email'])
-            if inputs['Phone']:
-                duckduckgo_results['Phone'], tavily_results['Phone'] = search_phone(inputs['Phone'])
-            
-            if inputs['Region']:
-                duckduckgo_results['Region'], tavily_results['Region'] = search_region(inputs['Region'])
-            if inputs['Profession']:
-                duckduckgo_results['Profession'], tavily_results['Profession'] = search_profession(inputs['Profession'])
-            if inputs['Employer']:
-                duckduckgo_results['Employer'], tavily_results['Employer'] = search_employer(inputs['Employer'])
-            if inputs['Associates']:
-                duckduckgo_results['Associates'], tavily_results['Associates'] = search_associates(inputs['Associates'])
+            if region:
+                duckduckgo_results['Region'], tavily_results['Region'] = search_region(region)
+            if profession:
+                duckduckgo_results['Profession'], tavily_results['Profession'] = search_profession(profession)
+            if employer:
+                duckduckgo_results['Employer'], tavily_results['Employer'] = search_employer(employer)
+            if associates:
+                duckduckgo_results['Associates'], tavily_results['Associates'] = search_associates(associates)
 
             # Gera o perfil do LinkedIn
-            profile_data = get_linkedin_profile_data(inputs['Profile']) if inputs['Profile'] else "Nenhum perfil do LinkedIn fornecido."
+            profile_data = get_linkedin_profile_data(profile) if profile else "Nenhum perfil do LinkedIn fornecido."
 
             # Gera o prompt para o modelo Gemini
             duckduckgo_summary = "\n".join([f"{key}: {value}" for key, value in duckduckgo_results.items()])
             tavily_summary = "\n".join([f"{key}: {', '.join(value)}" for key, value in tavily_results.items()])
 
             prompt = f"""
-            Você é um especialista em inteligência de mercado. Abaixo estão os dados coletados de diferentes fontes sobre o alvo 
-            - Perfil Linkedin:
-            {response_profile}
+            Você é um especialista em inteligência de mercado. Abaixo estão os dados coletados de diferentes fontes sobre o alvo:
+
+            Nome: {target_name}
+            Gênero: {gender}
+            Faixa etária: {age_range}
+            E-mail: {email}
+            Telefone: {phone}
+            Perfil: {profile}
+            Região: {region}
+            Profissão: {profession}
+            Empregador: {employer}
+            Descrição de personalidade: {description_pers}
+            Descrição de aparência física: {description_phys}
+            Associados: {associates}
+
+            Dados do LinkedIn:
+            {profile_data}
 
             Com base nessas informações, gere um relatório detalhado em português brasileiro, estruturado nos seguintes tópicos:
 
             1. Resumo geral do alvo.
             2. Insights relevantes para cada aspecto (name, gender, age, etc.).
             3. Conclusões e possíveis aplicações estratégicas.
-
-            4. Relacione toos os pontos e traga insights sobre o alvo
 
             Cada ponto deve ser explicado de forma detalhada, com insights aprofundados e organizados em parágrafos bem estruturados.
             """
