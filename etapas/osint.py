@@ -148,13 +148,26 @@ def osint_report():
             else:
                 profile_data = "Nenhum perfil do LinkedIn fornecido."
 
-            # Gera o prompt para o modelo Gemini
+            # Gera o prompt para o modelo Gemini com todas as variáveis de input
             duckduckgo_summary = "\n".join([f"{key}: {value}" for key, value in duckduckgo_results.items()])
             tavily_summary = "\n".join([f"{key}: {', '.join(value)}" for key, value in tavily_results.items()])
 
             prompt = f"""
             Você é um especialista em inteligência de mercado. Abaixo estão os dados coletados de diferentes fontes sobre o alvo:
-            
+
+            1. Nome do Alvo: {inputs['Target Name'] if inputs['Target Name'] else 'Não disponível'}
+            2. Gênero: {inputs['Gender'] if inputs['Gender'] else 'Não disponível'}
+            3. Faixa Etária: {inputs['Age Range'] if inputs['Age Range'] else 'Não disponível'}
+            4. Email: {inputs['Email'] if inputs['Email'] else 'Não disponível'}
+            5. Telefone: {inputs['Phone'] if inputs['Phone'] else 'Não disponível'}
+            6. Perfil: {inputs['Profile'] if inputs['Profile'] else 'Não disponível'}
+            7. Região: {inputs['Region'] if inputs['Region'] else 'Não disponível'}
+            8. Profissão: {inputs['Profession'] if inputs['Profession'] else 'Não disponível'}
+            9. Empregador: {inputs['Employer'] if inputs['Employer'] else 'Não disponível'}
+            10. Descrição da personalidade: {inputs['Description of personality'] if inputs['Description of personality'] else 'Não disponível'}
+            11. Descrição da aparência física: {inputs['Description of physical appearance'] if inputs['Description of physical appearance'] else 'Não disponível'}
+            12. Associados: {inputs['Associates'] if inputs['Associates'] else 'Não disponível'}
+
             - Perfil Linkedin:
             {profile_data}
 
