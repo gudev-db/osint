@@ -17,15 +17,15 @@ modelo_linguagem = genai.GenerativeModel("gemini-1.5-flash")
 client1 = TavilyClient(api_key='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')
 
 
-# Função para buscar informações no DuckDuckGo (RapidAPI)
 def fetch_duckduckgo(query, rapid_key):
-    url = "duckduckgo-search-api.p.rapidapi.com"
+    url = "https://duckduckgo-search-api.p.rapidapi.com"  # Corrigido com https://
     headers = {
         "x-rapidapi-key": rapid_key,
         "x-rapidapi-host": "duckduckgo-search-api.p.rapidapi.com"
     }
     response = requests.get(url, headers=headers, params={"q": query})
     return response.text
+
 
 
 # Função para buscar informações no Tavily sobre um único termo
