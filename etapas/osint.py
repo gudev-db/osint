@@ -179,6 +179,9 @@ def osint_report():
             4. Relacione todos os pontos e traga insights sobre o alvo.
 
             Cada ponto deve ser explicado de forma detalhada, com insights aprofundados e organizados em parágrafos bem estruturados.
+
+            Me de os melhores cargos para essa pessoa, a melhor forma de ir atrás dela. Sugestões e insights sobre sua vida, personalidade, dores. Me ensine a me
+            comunicar com essa pessoa.
             """
 
             # Gera o relatório com Gemini
