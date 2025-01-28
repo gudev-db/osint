@@ -18,7 +18,7 @@ client1 = TavilyClient(api_key='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')
 
 
 def fetch_duckduckgo(query, rapid_key):
-    url = "https://duckduckgo-search-api.p.rapidapi.com"  # Adicionando o esquema https://
+    url = "https://duckduckgo-search-api.p.rapidapi.com"
     headers = {
         "x-rapidapi-key": rapid_key,
         "x-rapidapi-host": "duckduckgo-search-api.p.rapidapi.com"
@@ -34,8 +34,8 @@ def fetch_tavily(query, client, days=90, max_results=15):
 
 # Funções para cada variável de entrada
 def search_target_name(target_name):
-    duckduckgo_result = fetch_duckduckgo(f"Informações sobre {target_name}", rapid_key)
-    tavily_result = fetch_tavily(f"Detalhes sobre {target_name}", client1)
+    duckduckgo_result = fetch_duckduckgo(f"Information about {target_name}", rapid_key)
+    tavily_result = fetch_tavily(f"Details about {target_name}", client1)
     return duckduckgo_result, tavily_result
 
 
@@ -58,26 +58,26 @@ def search_profile(profile):
 
 
 def search_region(region):
-    duckduckgo_result = fetch_duckduckgo(f"Notícias sobre {region}", rapid_key)
-    tavily_result = fetch_tavily(f"Notícias sobre {region}", client1)
+    duckduckgo_result = fetch_duckduckgo(f"News about {region}", rapid_key)
+    tavily_result = fetch_tavily(f"News about {region}", client1)
     return duckduckgo_result, tavily_result
 
 
 def search_profession(profession):
-    duckduckgo_result = fetch_duckduckgo(f"Informações sobre a profissão {profession}", rapid_key)
-    tavily_result = fetch_tavily(f"Detalhes sobre a profissão {profession}", client1)
+    duckduckgo_result = fetch_duckduckgo(f"Information about the profession {profession}", rapid_key)
+    tavily_result = fetch_tavily(f"Details about the profession {profession}", client1)
     return duckduckgo_result, tavily_result
 
 
 def search_employer(employer):
-    duckduckgo_result = fetch_duckduckgo(f"Informações sobre o empregador {employer}", rapid_key)
-    tavily_result = fetch_tavily(f"Detalhes sobre o empregador {employer}", client1)
+    duckduckgo_result = fetch_duckduckgo(f"Information about the employer {employer}", rapid_key)
+    tavily_result = fetch_tavily(f"Details about the employer {employer}", client1)
     return duckduckgo_result, tavily_result
 
 
 def search_associates(associates):
-    duckduckgo_result = fetch_duckduckgo(f"Informações sobre os associados {associates}", rapid_key)
-    tavily_result = fetch_tavily(f"Detalhes sobre os associados {associates}", client1)
+    duckduckgo_result = fetch_duckduckgo(f"Information about associates {associates}", rapid_key)
+    tavily_result = fetch_tavily(f"Details about associates {associates}", client1)
     return duckduckgo_result, tavily_result
 
 
@@ -94,7 +94,6 @@ def get_linkedin_profile_data(profile_url):
 
     response = requests.get(url, headers=headers, params=querystring)
 
-    # Retorna diretamente a resposta JSON
     return response.json()
 
 
@@ -118,86 +117,83 @@ def osint_report():
         "Associates": st.text_input("Associates:", key="associates"),
     }
 
-    # Verifica se os inputs estão preenchidos
-    if any(inputs.values()):
-        with st.spinner("Realizando pesquisa OSINT..."):
-            # Coleta informações do DuckDuckGo e Tavily para cada entrada
-            duckduckgo_results = {}
-            tavily_results = {}
+    # Botão para gerar o relatório
+    if st.button("Investigate"):
+        if any(inputs.values()):
+            with st.spinner("Performing OSINT analysis..."):
+                # Coleta informações do DuckDuckGo e Tavily para cada entrada
+                duckduckgo_results = {}
+                tavily_results = {}
 
-            if inputs['Target Name']:
-                duckduckgo_results['Target Name'], tavily_results['Target Name'] = search_target_name(inputs['Target Name'])
+                if inputs['Target Name']:
+                    duckduckgo_results['Target Name'], tavily_results['Target Name'] = search_target_name(inputs['Target Name'])
 
-            if inputs['Email']:
-                duckduckgo_results['Email'], tavily_results['Email'] = search_email(inputs['Email'])
-            if inputs['Phone']:
-                duckduckgo_results['Phone'], tavily_results['Phone'] = search_phone(inputs['Phone'])
+                if inputs['Email']:
+                    duckduckgo_results['Email'], tavily_results['Email'] = search_email(inputs['Email'])
+                if inputs['Phone']:
+                    duckduckgo_results['Phone'], tavily_results['Phone'] = search_phone(inputs['Phone'])
 
-            if inputs['Region']:
-                duckduckgo_results['Region'], tavily_results['Region'] = search_region(inputs['Region'])
-            if inputs['Profession']:
-                duckduckgo_results['Profession'], tavily_results['Profession'] = search_profession(inputs['Profession'])
-            if inputs['Employer']:
-                duckduckgo_results['Employer'], tavily_results['Employer'] = search_employer(inputs['Employer'])
-            if inputs['Associates']:
-                duckduckgo_results['Associates'], tavily_results['Associates'] = search_associates(inputs['Associates'])
+                if inputs['Region']:
+                    duckduckgo_results['Region'], tavily_results['Region'] = search_region(inputs['Region'])
+                if inputs['Profession']:
+                    duckduckgo_results['Profession'], tavily_results['Profession'] = search_profession(inputs['Profession'])
+                if inputs['Employer']:
+                    duckduckgo_results['Employer'], tavily_results['Employer'] = search_employer(inputs['Employer'])
+                if inputs['Associates']:
+                    duckduckgo_results['Associates'], tavily_results['Associates'] = search_associates(inputs['Associates'])
 
-            # Pega os dados do LinkedIn
-            if inputs['Profile']:
-                profile_data = get_linkedin_profile_data(inputs['Profile'])
-            else:
-                profile_data = "Nenhum perfil do LinkedIn fornecido."
+                # Pega os dados do LinkedIn
+                if inputs['Profile']:
+                    profile_data = get_linkedin_profile_data(inputs['Profile'])
+                else:
+                    profile_data = "No LinkedIn profile provided."
 
-            # Gera o prompt para o modelo Gemini com todas as variáveis de input
-            duckduckgo_summary = "\n".join([f"{key}: {value}" for key, value in duckduckgo_results.items()])
-            tavily_summary = "\n".join([f"{key}: {', '.join(value)}" for key, value in tavily_results.items()])
+                # Gera o prompt para o modelo Gemini com todas as variáveis de input
+                duckduckgo_summary = "\n".join([f"{key}: {value}" for key, value in duckduckgo_results.items()])
+                tavily_summary = "\n".join([f"{key}: {', '.join(value)}" for key, value in tavily_results.items()])
 
-            prompt = f"""
-            Você é um especialista em inteligência de mercado e engenharia social. Desenvolva um relatório
-            OSINT extremamente detalhado, analítico, profundo, que vai até o cerne da pessoa sendo analisada.
-            
-            Abaixo estão os dados coletados de diferentes fontes sobre o alvo:
+                prompt = f"""
+                You are an expert in market intelligence and social engineering. Develop an extremely detailed, analytical, and deep OSINT report that gets to the core of the person being analyzed.
 
-            1. Nome do Alvo: {inputs['Target Name'] if inputs['Target Name'] else 'Não disponível'}
-            2. Gênero: {inputs['Gender'] if inputs['Gender'] else 'Não disponível'}
-            3. Faixa Etária: {inputs['Age Range'] if inputs['Age Range'] else 'Não disponível'}
-            4. Email: {inputs['Email'] if inputs['Email'] else 'Não disponível'}
-            5. Telefone: {inputs['Phone'] if inputs['Phone'] else 'Não disponível'}
-            6. Perfil: {inputs['Profile'] if inputs['Profile'] else 'Não disponível'}
-            7. Região: {inputs['Region'] if inputs['Region'] else 'Não disponível'}
-            8. Profissão: {inputs['Profession'] if inputs['Profession'] else 'Não disponível'}
-            9. Empregador: {inputs['Employer'] if inputs['Employer'] else 'Não disponível'}
-            10. Descrição da personalidade: {inputs['Description of personality'] if inputs['Description of personality'] else 'Não disponível'}
-            11. Descrição da aparência física: {inputs['Description of physical appearance'] if inputs['Description of physical appearance'] else 'Não disponível'}
-            12. Associados: {inputs['Associates'] if inputs['Associates'] else 'Não disponível'}
+                The following are the data collected from different sources about the target:
 
-            - Perfil Linkedin:
-            {profile_data}
+                1. Target Name: {inputs['Target Name'] if inputs['Target Name'] else 'Not available'}
+                2. Gender: {inputs['Gender'] if inputs['Gender'] else 'Not available'}
+                3. Age Range: {inputs['Age Range'] if inputs['Age Range'] else 'Not available'}
+                4. Email: {inputs['Email'] if inputs['Email'] else 'Not available'}
+                5. Phone: {inputs['Phone'] if inputs['Phone'] else 'Not available'}
+                6. Profile: {inputs['Profile'] if inputs['Profile'] else 'Not available'}
+                7. Region: {inputs['Region'] if inputs['Region'] else 'Not available'}
+                8. Profession: {inputs['Profession'] if inputs['Profession'] else 'Not available'}
+                9. Employer: {inputs['Employer'] if inputs['Employer'] else 'Not available'}
+                10. Personality Description: {inputs['Description of personality'] if inputs['Description of personality'] else 'Not available'}
+                11. Physical Appearance Description: {inputs['Description of physical appearance'] if inputs['Description of physical appearance'] else 'Not available'}
+                12. Associates: {inputs['Associates'] if inputs['Associates'] else 'Not available'}
 
-            Com base nessas informações, gere um relatório detalhado em português brasileiro, estruturado nos seguintes tópicos:
+                - LinkedIn Profile:
+                {profile_data}
 
-            1. Resumo geral do alvo.
-            2. Insights relevantes para cada aspecto (nome, gênero, idade, etc.).
-            3. Conclusões e possíveis aplicações estratégicas.
-            4. Relacione todos os pontos e traga insights sobre o alvo.
+                Based on this information, generate a detailed report in English, structured in the following sections:
 
-            Cada ponto deve ser explicado de forma detalhada, com insights aprofundados e organizados em parágrafos bem estruturados.
+                1. General summary of the target.
+                2. Relevant insights for each aspect (name, gender, age, etc.).
+                3. Conclusions and potential strategic applications.
+                4. Relate all points and bring insights about the target.
 
-            Me de os melhores cargos para essa pessoa, a melhor forma de ir atrás dela. Sugestões e insights sobre sua vida, personalidade, dores. Me ensine a me
-            comunicar com essa pessoa de uma forma específica às suas características. Não seja razo. Seja detalhista. Você é uma pessoa especialista em engenharia social.
+                Each point should be explained in detail, with in-depth insights and organized in well-structured paragraphs.
 
-            Rejida um texto de 5000 palavras sobre sua personalidade, dores, trajetória de vida, anseios, desejos, habilidades, gostos, trace o perfil
-            completo que você pode inferir sobre ele.
-            
-            crie tambem o Approach Persona,
-            o tipo de pessoa para quem ele seria mais
-            receptivo (desde o genero, personalidade, cargo, status civil, idade, aparência, tom, trajetoria)
-            """
+                Give me the best roles for this person, the best way to approach them. Suggestions and insights about their life, personality, pains. Teach me how to communicate with this person in a way specific to their characteristics. Don’t be reasonable. Be detailed. You are a specialist in social engineering.
 
-            # Gera o relatório com Gemini
-            osint_report_output = modelo_linguagem.generate_content(prompt).text
+                Write a 5 long and detailed paragraph text about their personality, pains, life trajectory, anxieties, desires, skills, likes, and create a complete profile you can infer about them.
 
-            # Exibe o relatório no Streamlit
-            st.subheader("OSINT Report Generated")
-            st.markdown(osint_report_output)
+                Also create the Approach Persona, the type of person they would be most receptive to (including gender, personality, position, marital status, age, appearance, tone, life trajectory).
+                """
 
+                # Gera o relatório com Gemini
+                osint_report_output = modelo_linguagem.generate_content(prompt).text
+
+                # Exibe o relatório no Streamlit
+                st.subheader("OSINT Report Generated")
+                st.markdown(osint_report_output)
+        else:
+            st.warning("Please fill in at least one field to generate the report.")
