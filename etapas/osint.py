@@ -17,15 +17,15 @@ modelo_linguagem = genai.GenerativeModel("gemini-1.5-flash")
 client1 = TavilyClient(api_key='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')
 
 
+# Função para buscar informações no DuckDuckGo (RapidAPI)
 def fetch_duckduckgo(query, rapid_key):
-    url = "https://duckduckgo-search-api.p.rapidapi.com"  # Corrigido com https://
+    url = "duckduckgo-search-api.p.rapidapi.com"
     headers = {
         "x-rapidapi-key": rapid_key,
         "x-rapidapi-host": "duckduckgo-search-api.p.rapidapi.com"
     }
     response = requests.get(url, headers=headers, params={"q": query})
     return response.text
-
 
 
 # Função para buscar informações no Tavily sobre um único termo
@@ -38,12 +38,6 @@ def search_target_name(target_name):
     duckduckgo_result = fetch_duckduckgo(f"Informações sobre {target_name}", rapid_key)
     tavily_result = fetch_tavily(f"Detalhes sobre {target_name}", client1)
     return duckduckgo_result, tavily_result
-
-
-
-
-
-
 
 
 def search_email(email):
@@ -82,10 +76,6 @@ def search_employer(employer):
     return duckduckgo_result, tavily_result
 
 
-
-
-
-
 def search_associates(associates):
     duckduckgo_result = fetch_duckduckgo(f"Informações sobre os associados {associates}", rapid_key)
     tavily_result = fetch_tavily(f"Detalhes sobre os associados {associates}", client1)
@@ -94,9 +84,72 @@ def search_associates(associates):
 
 import requests
 
+def get_linkedin_profile_data(profile_url):
+    """
+    Função para buscar dados do perfil do LinkedIn e retornar as informações formatadas.
+    
+    Parameters:
+        profile_url (str): URL do perfil LinkedIn a ser consultado.
+    
+    Returns:
+        str: Dados formatados para serem inseridos no prompt do Gemini.
+    """
+    url = "https://fresh-linkedin-profile-data.p.rapidapi.com/get-linkedin-profile"
 
+    # Parâmetros para a API
+    querystring = {
+        "linkedin_url": profile_url,
+        "include_skills": "true",
+        "include_certifications": "true",
+        "include_publications": "true",
+        "include_honors": "true",
+        "include_volunteers": "true",
+        "include_projects": "true",
+        "include_patents": "true",
+        "include_courses": "true",
+        "include_organizations": "true",
+        "include_profile_status": "true",
+        "include_company_public_url": "true"
+    }
 
+    # Cabeçalhos para a API
+    headers = {
+        "x-rapidapi-key": "0c5b50def9msh23155782b7fc458p103523jsn427488a01210",
+        "x-rapidapi-host": "fresh-linkedin-profile-data.p.rapidapi.com"
+    }
 
+    # Realiza a requisição
+    response = requests.get(url, headers=headers, params=querystring)
+
+    # Se a resposta for bem-sucedida, formatar os dados para o prompt
+    if response.status_code == 200:
+        profile_data = response.json()
+
+        # Formata as informações do perfil para o prompt do Gemini
+        profile_summary = f"""
+        Nome: {profile_data.get('fullName', 'Não disponível')}
+        Cargo atual: {profile_data.get('currentPosition', 'Não disponível')}
+        Localização: {profile_data.get('location', 'Não disponível')}
+        Resumo: {profile_data.get('summary', 'Não disponível')}
+        Indústrias: {', '.join(profile_data.get('industries', ['Não disponível']))}
+        
+        Habilidades: {', '.join(profile_data.get('skills', ['Não disponível']))}
+        Certificações: {', '.join(profile_data.get('certifications', ['Não disponível']))}
+        Publicações: {', '.join(profile_data.get('publications', ['Não disponível']))}
+        Honrarias: {', '.join(profile_data.get('honors', ['Não disponível']))}
+        Voluntariado: {', '.join(profile_data.get('volunteerExperience', ['Não disponível']))}
+        Projetos: {', '.join(profile_data.get('projects', ['Não disponível']))}
+        Patentes: {', '.join(profile_data.get('patents', ['Não disponível']))}
+        Cursos: {', '.join(profile_data.get('courses', ['Não disponível']))}
+        Organizações: {', '.join(profile_data.get('organizations', ['Não disponível']))}
+        Status do perfil: {profile_data.get('profileStatus', 'Não disponível')}
+        URL público da empresa: {profile_data.get('companyPublicUrl', 'Não disponível')}
+        """
+        
+        return profile_summary
+
+    else:
+        return "Erro ao buscar dados do LinkedIn."
 
 
 # Função principal para pesquisa OSINT com múltiplos termos
@@ -119,75 +172,6 @@ def osint_report():
         "Associates": st.text_input("Associates:", key="associates"),
     }
 
-    def get_linkedin_profile_data(profile_url):
-        """
-        Função para buscar dados do perfil do LinkedIn e retornar as informações formatadas.
-        
-        Parameters:
-            profile_url (str): URL do perfil LinkedIn a ser consultado.
-        
-        Returns:
-            str: Dados formatados para serem inseridos no prompt do Gemini.
-        """
-        url = "https://fresh-linkedin-profile-data.p.rapidapi.com/get-linkedin-profile"
-    
-        # Parâmetros para a API
-        querystring = {
-            "linkedin_url": profile_url,
-            "include_skills": "true",
-            "include_certifications": "true",
-            "include_publications": "true",
-            "include_honors": "true",
-            "include_volunteers": "true",
-            "include_projects": "true",
-            "include_patents": "true",
-            "include_courses": "true",
-            "include_organizations": "true",
-            "include_profile_status": "true",
-            "include_company_public_url": "true"
-        }
-    
-        # Cabeçalhos para a API
-        headers = {
-            "x-rapidapi-key": "0c5b50def9msh23155782b7fc458p103523jsn427488a01210",
-            "x-rapidapi-host": "fresh-linkedin-profile-data.p.rapidapi.com"
-        }
-    
-        # Realiza a requisição
-        response = requests.get(url, headers=headers, params=querystring)
-    
-        # Se a resposta for bem-sucedida, formatar os dados para o prompt
-        if response.status_code == 200:
-            profile_data = response.json()
-    
-            # Formata as informações do perfil para o prompt do Gemini
-            profile_summary = f"""
-            Nome: {profile_data.get('fullName', 'Não disponível')}
-            Cargo atual: {profile_data.get('currentPosition', 'Não disponível')}
-            Localização: {profile_data.get('location', 'Não disponível')}
-            Resumo: {profile_data.get('summary', 'Não disponível')}
-            Indústrias: {', '.join(profile_data.get('industries', ['Não disponível']))}
-            
-            Habilidades: {', '.join(profile_data.get('skills', ['Não disponível']))}
-            Certificações: {', '.join(profile_data.get('certifications', ['Não disponível']))}
-            Publicações: {', '.join(profile_data.get('publications', ['Não disponível']))}
-            Honrarias: {', '.join(profile_data.get('honors', ['Não disponível']))}
-            Voluntariado: {', '.join(profile_data.get('volunteerExperience', ['Não disponível']))}
-            Projetos: {', '.join(profile_data.get('projects', ['Não disponível']))}
-            Patentes: {', '.join(profile_data.get('patents', ['Não disponível']))}
-            Cursos: {', '.join(profile_data.get('courses', ['Não disponível']))}
-            Organizações: {', '.join(profile_data.get('organizations', ['Não disponível']))}
-            Status do perfil: {profile_data.get('profileStatus', 'Não disponível')}
-            URL público da empresa: {profile_data.get('companyPublicUrl', 'Não disponível')}
-            """
-            
-            return profile_summary
-    
-        else:
-            return "Erro ao buscar dados do LinkedIn."
-
-    
-
     # Verifica se os inputs estão preenchidos
     if any(inputs.values()):
         with st.spinner("Realizando pesquisa OSINT..."):
@@ -197,7 +181,7 @@ def osint_report():
 
             if inputs['Target Name']:
                 duckduckgo_results['Target Name'], tavily_results['Target Name'] = search_target_name(inputs['Target Name'])
-           
+
             if inputs['Email']:
                 duckduckgo_results['Email'], tavily_results['Email'] = search_email(inputs['Email'])
             if inputs['Phone']:
@@ -210,19 +194,19 @@ def osint_report():
                 duckduckgo_results['Profession'], tavily_results['Profession'] = search_profession(inputs['Profession'])
             if inputs['Employer']:
                 duckduckgo_results['Employer'], tavily_results['Employer'] = search_employer(inputs['Employer'])
-           
             if inputs['Associates']:
                 duckduckgo_results['Associates'], tavily_results['Associates'] = search_associates(inputs['Associates'])
+
+            # Gera o perfil do LinkedIn
+            profile_data = get_linkedin_profile_data(inputs['Profile']) if inputs['Profile'] else "Nenhum perfil do LinkedIn fornecido."
 
             # Gera o prompt para o modelo Gemini
             duckduckgo_summary = "\n".join([f"{key}: {value}" for key, value in duckduckgo_results.items()])
             tavily_summary = "\n".join([f"{key}: {', '.join(value)}" for key, value in tavily_results.items()])
 
-            profile_data = get_linkedin_profile_data(profile)
-
             prompt = f"""
-            Você é um especialista em inteligência de mercado. Abaixo estão os dados coletados de diferentes fontes sobre o alvo {target_name}, gênero: {gender}, na
-            faixa de idade {age_range} anos, com personalidade {description_pers}, aparência {description_phys} :
+            Você é um especialista em inteligência de mercado. Abaixo estão os dados coletados de diferentes fontes sobre o alvo {inputs['Target Name']}, gênero: {inputs['Gender']}, na
+            faixa de idade {inputs['Age Range']} anos, com personalidade {inputs['Description of personality']}, aparência {inputs['Description of physical appearance']}:
 
             - Resultados do DuckDuckGo:
             {duckduckgo_summary}
