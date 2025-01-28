@@ -185,6 +185,13 @@ def osint_report():
 
             Me de os melhores cargos para essa pessoa, a melhor forma de ir atrás dela. Sugestões e insights sobre sua vida, personalidade, dores. Me ensine a me
             comunicar com essa pessoa de uma forma específica às suas características. Não seja razo. Seja detalhista. Você é uma pessoa especialista em engenharia social.
+
+            Rejida um texto de 5000 palavras sobre sua personalidade, dores, trajetória de vida, anseios, desejos, habilidades, gostos, trace o perfil
+            completo que você pode inferir sobre ele.
+            
+            crie tambem o Approach Persona,
+            o tipo de pessoa para quem ele seria mais
+            receptivo (desde o genero, personalidade, cargo, status civil, idade, aparência, tom, trajetoria)
             """
 
             # Gera o relatório com Gemini
