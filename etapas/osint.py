@@ -181,7 +181,7 @@ def osint_report():
             Cada ponto deve ser explicado de forma detalhada, com insights aprofundados e organizados em parágrafos bem estruturados.
 
             Me de os melhores cargos para essa pessoa, a melhor forma de ir atrás dela. Sugestões e insights sobre sua vida, personalidade, dores. Me ensine a me
-            comunicar com essa pessoa.
+            comunicar com essa pessoa de uma forma específica às suas características. Não seja razo. Seja detalhista. Você é uma pessoa especialista em engenharia social.
             """
 
             # Gera o relatório com Gemini
