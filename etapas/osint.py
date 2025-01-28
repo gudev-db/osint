@@ -14,7 +14,7 @@ genai.configure(api_key=gemini_api_key)
 modelo_linguagem = genai.GenerativeModel("gemini-1.5-flash")
 
 # Configura o cliente Tavily
-client1 = TavilyClient(api_key=<TAVILY_KEY>)
+client1 = TavilyClient(api_key='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')
 
 
 def fetch_duckduckgo(query, rapid_key):
@@ -179,6 +179,19 @@ def osint_report():
             duckduckgo_results = {}
             tavily_results = {}
 
+            import requests
+
+            url = "https://linkedin-api8.p.rapidapi.com/get-profile-data-by-url"
+            
+            querystring = {"url":f"{inputs['profile']}"}
+            
+            headers = {
+            	"x-rapidapi-key": "0c5b50def9msh23155782b7fc458p103523jsn427488a01210",
+            	"x-rapidapi-host": "linkedin-api8.p.rapidapi.com"
+            }
+            
+            response_profile = requests.get(url, headers=headers, params=querystring)
+
             if inputs['Target Name']:
                 duckduckgo_results['Target Name'], tavily_results['Target Name'] = search_target_name(inputs['Target Name'])
 
@@ -186,8 +199,7 @@ def osint_report():
                 duckduckgo_results['Email'], tavily_results['Email'] = search_email(inputs['Email'])
             if inputs['Phone']:
                 duckduckgo_results['Phone'], tavily_results['Phone'] = search_phone(inputs['Phone'])
-            if inputs['Profile']:
-                duckduckgo_results['Profile'], tavily_results['Profile'] = search_profile(inputs['Profile'])
+            
             if inputs['Region']:
                 duckduckgo_results['Region'], tavily_results['Region'] = search_region(inputs['Region'])
             if inputs['Profession']:
@@ -215,13 +227,15 @@ def osint_report():
             {tavily_summary}
 
             - Perfil Linkedin:
-            {profile_data}
+            {response_profile}
 
             Com base nessas informações, gere um relatório detalhado em português brasileiro, estruturado nos seguintes tópicos:
 
             1. Resumo geral do alvo.
             2. Insights relevantes para cada aspecto (name, gender, age, etc.).
             3. Conclusões e possíveis aplicações estratégicas.
+
+            4. Relacione toos os pontos e traga insights sobre o alvo
 
             Cada ponto deve ser explicado de forma detalhada, com insights aprofundados e organizados em parágrafos bem estruturados.
             """
