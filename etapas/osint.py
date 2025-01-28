@@ -103,6 +103,22 @@ import requests
 def osint_report():
     st.subheader("OSINT Report")
 
+    # Inputs no Streamlit
+    inputs = {
+        "Target Name": st.text_input("Target Name:", key="target"),
+        "Gender": st.text_input("Gender:", key="gender"),
+        "Age Range": st.text_input("Age Range:", key="age"),
+        "Email": st.text_input("Email:", key="email"),
+        "Phone": st.text_input("Phone:", key="phone"),
+        "Profile": st.text_input("Profile:", key="profile"),
+        "Region": st.text_input("Region:", key="region"),
+        "Profession": st.text_input("Profession:", key="profession"),
+        "Employer": st.text_input("Employer:", key="employer"),
+        "Description of personality": st.text_input("Description of personality:", key="description_pers"),
+        "Description of physical appearance": st.text_input("Description of physical appearance:", key="description_phys"),
+        "Associates": st.text_input("Associates:", key="associates"),
+    }
+
     def get_linkedin_profile_data(profile_url):
         """
         Função para buscar dados do perfil do LinkedIn e retornar as informações formatadas.
@@ -170,21 +186,7 @@ def osint_report():
         else:
             return "Erro ao buscar dados do LinkedIn."
 
-    # Inputs no Streamlit
-    inputs = {
-        "Target Name": st.text_input("Target Name:", key="target"),
-        "Gender": st.text_input("Gender:", key="gender"),
-        "Age Range": st.text_input("Age Range:", key="age"),
-        "Email": st.text_input("Email:", key="email"),
-        "Phone": st.text_input("Phone:", key="phone"),
-        "Profile": st.text_input("Profile:", key="profile"),
-        "Region": st.text_input("Region:", key="region"),
-        "Profession": st.text_input("Profession:", key="profession"),
-        "Employer": st.text_input("Employer:", key="employer"),
-        "Description of personality": st.text_input("Description of personality:", key="description_pers"),
-        "Description of physical appearance": st.text_input("Description of physical appearance:", key="description_phys"),
-        "Associates": st.text_input("Associates:", key="associates"),
-    }
+    
 
     # Verifica se os inputs estão preenchidos
     if any(inputs.values()):
