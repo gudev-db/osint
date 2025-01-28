@@ -153,7 +153,10 @@ def osint_report():
             tavily_summary = "\n".join([f"{key}: {', '.join(value)}" for key, value in tavily_results.items()])
 
             prompt = f"""
-            Você é um especialista em inteligência de mercado. Abaixo estão os dados coletados de diferentes fontes sobre o alvo:
+            Você é um especialista em inteligência de mercado e engenharia social. Desenvolva um relatório
+            OSINT extremamente detalhado, analítico, profundo, que vai até o cerne da pessoa sendo analisada.
+            
+            Abaixo estão os dados coletados de diferentes fontes sobre o alvo:
 
             1. Nome do Alvo: {inputs['Target Name'] if inputs['Target Name'] else 'Não disponível'}
             2. Gênero: {inputs['Gender'] if inputs['Gender'] else 'Não disponível'}
