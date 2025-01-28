@@ -112,9 +112,7 @@ def osint_report():
         "Region": st.text_input("Region:", key="region"),
         "Profession": st.text_input("Profession:", key="profession"),
         "Employer": st.text_input("Employer:", key="employer"),
-        "Description of personality": st.text_input("Description of personality:", key="description_pers"),
-        "Description of physical appearance": st.text_input("Description of physical appearance:", key="description_phys"),
-        "Associates": st.text_input("Associates:", key="associates"),
+
     }
 
     # Botão para gerar o relatório
@@ -139,8 +137,7 @@ def osint_report():
                     duckduckgo_results['Profession'], tavily_results['Profession'] = search_profession(inputs['Profession'])
                 if inputs['Employer']:
                     duckduckgo_results['Employer'], tavily_results['Employer'] = search_employer(inputs['Employer'])
-                if inputs['Associates']:
-                    duckduckgo_results['Associates'], tavily_results['Associates'] = search_associates(inputs['Associates'])
+
 
                 # Pega os dados do LinkedIn
                 if inputs['Profile']:
@@ -166,9 +163,7 @@ def osint_report():
                 7. Region: {inputs['Region'] if inputs['Region'] else 'Not available'}
                 8. Profession: {inputs['Profession'] if inputs['Profession'] else 'Not available'}
                 9. Employer: {inputs['Employer'] if inputs['Employer'] else 'Not available'}
-                10. Personality Description: {inputs['Description of personality'] if inputs['Description of personality'] else 'Not available'}
-                11. Physical Appearance Description: {inputs['Description of physical appearance'] if inputs['Description of physical appearance'] else 'Not available'}
-                12. Associates: {inputs['Associates'] if inputs['Associates'] else 'Not available'}
+
 
                 - LinkedIn Profile:
                 {profile_data}
